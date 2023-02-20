@@ -1,24 +1,34 @@
 const mongoose = require("mongoose");
+const AutoIncrment = require("mongoose-sequence")(mongoose);
 
-const noteSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  roles: [
-    {
-      type: String,
-      default: "Employee",
+const noteSchema = new mongoose.Schema(
+  {
+    username: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
     },
-  ],
-  active: {
-    type: Boolean,
-    default: true,
+    title: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    completed: {
+      type: Boolean,
+      default: false,
+    },
   },
-});
+  {
+    timestamps: true,
+  }
+);
 
+noteSchema.plugin(AutoIncrment, {
+  inc_field: "ticket",
+  id: "ticketNums",
+  start_seq: 500,
+});
 module.exports = mongoose.model("User", noteSchema);
